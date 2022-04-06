@@ -1,14 +1,7 @@
 #include "uart.h"
 #define PIC32_DESIRED_BAUD 230400    // Baudrate for RS232
 
-// Perform startup routines:
-//  Make NU32_LED1 and NU32_LED2 pins outputs (NU32_USER is by default an input)
-//  Initialize the serial port - UART3 (no interrupt) 
-//  Enable interrupts
 void UART1_Startup() {
-  // disable interrupts
-  __builtin_disable_interrupts();
-
   // turn on UART1 without an interrupt
   U1MODEbits.BRGH = 0; // set baud to NU32_DESIRED_BAUD
   U1BRG = ((PIC32_SYS_FREQ / PIC32_DESIRED_BAUD) / 16) - 1;
@@ -23,11 +16,9 @@ void UART1_Startup() {
 
   // enable the uart
   U1MODEbits.ON = 1;
-
-  __builtin_enable_interrupts();
 }
 
-// Read from UART3
+// Read from UART1
 // block other functions until you get a '\r' or '\n'
 // send the pointer to your char array and the number of elements in the array
 void ReadUART1(char * message, int maxLength) {
@@ -53,7 +44,7 @@ void ReadUART1(char * message, int maxLength) {
   message[num_bytes] = '\0';
 }
 
-// Write a character array using UART3
+// Write a character array using UART2
 void WriteUART1(const char * string) {
   while (*string != '\0') {
     while (U1STAbits.UTXBF) {
